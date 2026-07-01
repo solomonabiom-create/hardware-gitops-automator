@@ -32,7 +32,6 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         pads = []
         for p in range(1, pin_count + 1):
             px = x_start + ((p - 1) * 2.54)
-            # FIX: Changed 'tht' pad definition spec parameter to 'thru_hole'
             pads.append(f"    (pad \"{p}\" thru_hole circle (at {px - x_start} 0) (size 1.7 1.7) (drill 1.0) (layers \"*.Cu\" \"*.Mask\"))")
         
         joined_pads = '\n'.join(pads)
@@ -98,7 +97,8 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         {"Reference": "J_POWER", "Value": "8-Pin Header", "Footprint": "PinHeader_1x08_P2.54mm", "Quantity": 1},
         {"Reference": "J_ANALOG", "Value": "6-Pin Header", "Footprint": "PinHeader_1x06_P2.54mm", "Quantity": 1},
         {"Reference": "J_DIGITAL_L", "Value": "8-Pin Header", "Footprint": "PinHeader_1x08_P2.54mm", "Quantity": 1},
-        {"License": "J_DIGITAL_H", "Value": "10-Pin Header", "Footprint": "PinHeader_1x10_P2.54mm", "Quantity": 1}
+        # FIX: Restored field token matching identity mapping to 'Reference' from 'License'
+        {"Reference": "J_DIGITAL_H", "Value": "10-Pin Header", "Footprint": "PinHeader_1x10_P2.54mm", "Quantity": 1}
     ])
 
     zone_lines = [
