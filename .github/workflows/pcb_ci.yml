@@ -1,0 +1,62 @@
+name: Hardware GitOps Production Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    container:
+      # Uses the official KiCad Docker image containing the headless CLI utilities
+      image: kicad/kicad:8.0
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Generate Project Files Programmatically
+        run: |
+          # Runs your script to build a fresh 3x5 component matrix shield layout
+          python3 generate_shield_v2.py --name CI_MatrixShield --author "Portfolio Pipeline" --rows 3 --cols 5
+
+      - name: Execute Automated Design Rule Check (DRC)
+        run: |
+          # Inspects the board for overlapping traces, small clearances, or layout shorts
+          # Generates a text-based report and exits with an error code if the board fails
+          kicad-cli pcb drc \
+            --output ./CI_MatrixShield/drc_report.txt \
+            --exit-code-violations \
+            ./CI_MatrixShield/CI_MatrixShield.kicad_pcb
+
+      - name: Compile and Export Gerber Fabrication Files
+        if: success() # Only executes if the automated DRC inspector passes successfully
+        run: |
+          mkdir -p ./production_package/
+          kicad-cli pcb export gerbers \
+            --output ./production_package/ \
+            --layers F.Cu,B.Cu,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts \
+            ./CI_MatrixShield/CI_MatrixShield.kicad_pcb
+
+      - name: Compile and Export Excellon Drill Instructions
+        if: success()
+        run: |
+          kicad-cli pcb export drill \
+            --output ./production_package/ \
+            --format excellon \
+            --units mm \
+            ./CI_MatrixShield/CI_MatrixShield.kicad_pcb
+
+      - name: Include Bill of Materials (BOM) in Production Package
+        if: success()
+        run: |
+          cp ./CI_MatrixShield/CI_MatrixShield_BOM.csv ./production_package/
+
+      - name: Package and Upload Production Release Artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Production-Gerbers-And-BOM
+          path: ./production_package/
