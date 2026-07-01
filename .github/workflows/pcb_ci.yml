@@ -10,8 +10,9 @@ jobs:
   build-and-verify:
     runs-on: ubuntu-latest
     container:
-      # Uses the official KiCad Docker image containing the headless CLI utilities
       image: kicad/kicad:8.0
+      # FIX: Force the container to execute with root privileges to bypass the checkout permission error
+      options: --user root
 
     steps:
       - name: Check out repository code
@@ -19,20 +20,17 @@ jobs:
 
       - name: Generate Project Files Programmatically
         run: |
-          # Runs your script to build a fresh 3x5 component matrix shield layout
           python3 generate_shield_v2.py --name CI_MatrixShield --author "Portfolio Pipeline" --rows 3 --cols 5
 
       - name: Execute Automated Design Rule Check (DRC)
         run: |
-          # Inspects the board for overlapping traces, small clearances, or layout shorts
-          # Generates a text-based report and exits with an error code if the board fails
           kicad-cli pcb drc \
             --output ./CI_MatrixShield/drc_report.txt \
             --exit-code-violations \
             ./CI_MatrixShield/CI_MatrixShield.kicad_pcb
 
       - name: Compile and Export Gerber Fabrication Files
-        if: success() # Only executes if the automated DRC inspector passes successfully
+        if: success()
         run: |
           mkdir -p ./production_package/
           kicad-cli pcb export gerbers \
