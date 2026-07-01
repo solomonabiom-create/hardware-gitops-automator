@@ -32,12 +32,13 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         pads = []
         for p in range(1, pin_count + 1):
             px = x_start + ((p - 1) * 2.54)
-            pads.append(f"    (pad \"{p}\" tht circle (at {px - x_start} 0) (size 1.7 1.7) (drill 1.0) (layers \"*.Cu\" \"*.Mask\"))")
+            # FIX: Changed 'tht' pad definition spec parameter to 'thru_hole'
+            pads.append(f"    (pad \"{p}\" thru_hole circle (at {px - x_start} 0) (size 1.7 1.7) (drill 1.0) (layers \"*.Cu\" \"*.Mask\"))")
         
         joined_pads = '\n'.join(pads)
         return (
             f"  (footprint \"Connector_PinHeader_2.54mm:PinHeader_1x{pin_count:02d}_P2.54mm_Vertical\"\n"
-            f"    (layer \"F.Cu\") (at {x_start} {y_start})\n"
+            f"    (type \"thru_hole\") (layer \"F.Cu\") (at {x_start} {y_start})\n"
             f"    (descr \"Header {ref}\") (path \"/{ref}\")\n"
             f"{joined_pads}\n"
             f"  )"
@@ -70,7 +71,7 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
             
             matrix_footprints.append(
                 f"  (footprint \"Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder\"\n"
-                f"    (layer \"F.Cu\") (at {r_x} {r_y})\n"
+                f"    (type \"smd\") (layer \"F.Cu\") (at {r_x} {r_y})\n"
                 f"    (fp_text reference \"{r_ref}\" (at 0 -1.5) (layer \"F.SilkS\") (effects (font (size 0.8 0.8) (thickness 0.15))))\n"
                 f"    (pad \"1\" smd rect (at -1.0 0) (size 1.15 1.4) (layers \"F.Cu\" \"F.Paste\" \"F.Mask\"))\n"
                 f"    (pad \"2\" smd rect (at 1.0 0) (size 1.15 1.4) (layers \"F.Cu\" \"F.Paste\" \"F.Mask\"))\n"
@@ -79,7 +80,7 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
             
             matrix_footprints.append(
                 f"  (footprint \"LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder\"\n"
-                f"    (layer \"F.Cu\") (at {led_x} {led_y})\n"
+                f"    (type \"smd\") (layer \"F.Cu\") (at {led_x} {led_y})\n"
                 f"    (fp_text reference \"{led_ref}\" (at 0 1.5) (layer \"F.SilkS\") (effects (font (size 0.8 0.8) (thickness 0.15))))\n"
                 f"    (pad \"1\" smd rect (at -1.0 0) (size 1.15 1.4) (layers \"F.Cu\" \"F.Paste\" \"F.Mask\"))\n"
                 f"    (pad \"2\" smd rect (at 1.0 0) (size 1.15 1.4) (layers \"F.Cu\" \"F.Paste\" \"F.Mask\"))\n"
@@ -97,7 +98,7 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         {"Reference": "J_POWER", "Value": "8-Pin Header", "Footprint": "PinHeader_1x08_P2.54mm", "Quantity": 1},
         {"Reference": "J_ANALOG", "Value": "6-Pin Header", "Footprint": "PinHeader_1x06_P2.54mm", "Quantity": 1},
         {"Reference": "J_DIGITAL_L", "Value": "8-Pin Header", "Footprint": "PinHeader_1x08_P2.54mm", "Quantity": 1},
-        {"Reference": "J_DIGITAL_H", "Value": "10-Pin Header", "Footprint": "PinHeader_1x10_P2.54mm", "Quantity": 1}
+        {"License": "J_DIGITAL_H", "Value": "10-Pin Header", "Footprint": "PinHeader_1x10_P2.54mm", "Quantity": 1}
     ])
 
     zone_lines = [
@@ -112,7 +113,6 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         f"  (gr_text \"BOM EXTRACTED VIA PYTHON\" (at 84 92) (layer \"F.SilkS\") (effects (font (size 1.0 1.0) (thickness 0.2)) (justify center)))"
     ]
 
-    # FIX: Pre-compile all text blocks cleanly outside of the f-string allocation block
     str_geometry = '\n'.join(geometry_lines)
     str_footprints = '\n'.join(footprints)
     str_matrix_footprints = '\n'.join(matrix_footprints)
