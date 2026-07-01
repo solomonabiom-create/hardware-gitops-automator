@@ -33,7 +33,16 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         for p in range(1, pin_count + 1):
             px = x_start + ((p - 1) * 2.54)
             pads.append(f"    (pad \"{p}\" tht circle (at {px - x_start} 0) (size 1.7 1.7) (drill 1.0) (layers \"*.Cu\" \"*.Mask\"))")
-        return f"  (footprint \"Connector_PinHeader_2.54mm:PinHeader_1x{pin_count:02d}_P2.54mm_Vertical\"\n    (layer \"F.Cu\") (at {x_start} {y_start})\n    (descr \"Header {ref}\") (path \"/{ref}\")\n{'\n'.join(pads)}\n  )"
+        
+        # FIX: Combine pads outside the f-string to prevent backslash parsing errors
+        joined_pads = '\n'.join(pads)
+        return (
+            f"  (footprint \"Connector_PinHeader_2.54mm:PinHeader_1x{pin_count:02d}_P2.54mm_Vertical\"\n"
+            f"    (layer \"F.Cu\") (at {x_start} {y_start})\n"
+            f"    (descr \"Header {ref}\") (path \"/{ref}\")\n"
+            f"{joined_pads}\n"
+            f"  )"
+        )
 
     footprints = [
         make_header("J_POWER", 62.7,  98.26, 8),
