@@ -85,8 +85,9 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
                 f"  )"
             )
             
-            matrix_traces.append(f"  (segment (start {r_x + 1.0} {r_y}) (end {r_x + 1.0} {led_y}) (width 0.3) (layer \"F.Cu\") (net {comp_counter+1}))")
-            matrix_traces.append(f"  (segment (start {r_x + 1.0} {led_y}) (end {led_x + 1.0} {led_y}) (width 0.3) (layer \"F.Cu\") (net {comp_counter+1}))")
+            # Use net mapping pointers instead of loose integer indexes
+            matrix_traces.append(f"  (segment (start {r_x + 1.0} {r_y}) (end {r_x + 1.0} {led_y}) (width 0.3) (layer \"F.Cu\") (net 1))")
+            matrix_traces.append(f"  (segment (start {r_x + 1.0} {led_y}) (end {led_x + 1.0} {led_y}) (width 0.3) (layer \"F.Cu\") (net 1))")
             
             bom_items.append({"Reference": r_ref, "Value": "220R", "Footprint": "R_0805_2012Metric", "Quantity": 1})
             bom_items.append({"Reference": led_ref, "Value": "Green LED", "Footprint": "LED_0805_2012Metric", "Quantity": 1})
@@ -106,11 +107,19 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         "  )"
     ]
 
+    # FIX: Updated text alignment properties from '(justify center)' to directional alignment layout tokens
     text_lines = [
-        f"  (gr_text \"MATRIX SHIELD: {project_name}\" (at 84 56) (layer \"F.SilkS\") (effects (font (size 1.5 1.5) (thickness 0.3) bold) (justify center)))",
-        f"  (gr_text \"BOM EXTRACTED VIA PYTHON\" (at 84 92) (layer \"F.SilkS\") (effects (font (size 1.0 1.0) (thickness 0.2)) (justify center)))"
+        f"  (gr_text \"MATRIX SHIELD: {project_name}\" (at 84 56) (layer \"F.SilkS\") (effects (font (size 1.5 1.5) (thickness 0.3) bold) (justify center left)))",
+        f"  (gr_text \"BOM EXTRACTED VIA PYTHON\" (at 84 92) (layer \"F.SilkS\") (effects (font (size 1.0 1.0) (thickness 0.2)) (justify center left)))"
     ]
 
+    # FIX: Added a formal global net map section right at the top header area
+    net_declarations = [
+        "  (net 0 \"\")",
+        "  (net 1 \"GND\")"
+    ]
+
+    str_nets = '\n'.join(net_declarations)
     str_geometry = '\n'.join(geometry_lines)
     str_footprints = '\n'.join(footprints)
     str_matrix_footprints = '\n'.join(matrix_footprints)
@@ -126,6 +135,7 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         "    (36 \"B.SilkS\" user \"B.Silkscreen\") (37 \"F.SilkS\" user \"F.Silkscreen\")\n"
         "    (38 \"B.Mask\" user) (39 \"F.Mask\" user)\n"
         "    (44 \"Edge.Cuts\" user)\n  )\n"
+        f"{str_nets}\n"
         f"{str_geometry}\n"
         f"{str_footprints}\n"
         f"{str_matrix_footprints}\n"
