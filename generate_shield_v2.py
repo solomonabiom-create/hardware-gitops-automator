@@ -34,7 +34,6 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
             px = x_start + ((p - 1) * 2.54)
             pads.append(f"    (pad \"{p}\" tht circle (at {px - x_start} 0) (size 1.7 1.7) (drill 1.0) (layers \"*.Cu\" \"*.Mask\"))")
         
-        # FIX: Combine pads outside the f-string to prevent backslash parsing errors
         joined_pads = '\n'.join(pads)
         return (
             f"  (footprint \"Connector_PinHeader_2.54mm:PinHeader_1x{pin_count:02d}_P2.54mm_Vertical\"\n"
@@ -113,6 +112,14 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         f"  (gr_text \"BOM EXTRACTED VIA PYTHON\" (at 84 92) (layer \"F.SilkS\") (effects (font (size 1.0 1.0) (thickness 0.2)) (justify center)))"
     ]
 
+    # FIX: Pre-compile all text blocks cleanly outside of the f-string allocation block
+    str_geometry = '\n'.join(geometry_lines)
+    str_footprints = '\n'.join(footprints)
+    str_matrix_footprints = '\n'.join(matrix_footprints)
+    str_matrix_traces = '\n'.join(matrix_traces)
+    str_zone_lines = '\n'.join(zone_lines)
+    str_text_lines = '\n'.join(text_lines)
+
     pcb_data = (
         "(kicad_pcb\n  (version 20240108)\n  (generator \"kicad_pcb_generic\")\n"
         "  (general (thickness 1.6))\n  (paper \"A4\")\n"
@@ -121,12 +128,12 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         "    (36 \"B.SilkS\" user \"B.Silkscreen\") (37 \"F.SilkS\" user \"F.Silkscreen\")\n"
         "    (38 \"B.Mask\" user) (39 \"F.Mask\" user)\n"
         "    (44 \"Edge.Cuts\" user)\n  )\n"
-        f"{'\n'.join(geometry_lines)}\n"
-        f"{'\n'.join(footprints)}\n"
-        f"{'\n'.join(matrix_footprints)}\n"
-        f"{'\n'.join(matrix_traces)}\n"
-        f"{'\n'.join(zone_lines)}\n"
-        f"{'\n'.join(text_lines)}\n"
+        f"{str_geometry}\n"
+        f"{str_footprints}\n"
+        f"{str_matrix_footprints}\n"
+        f"{str_matrix_traces}\n"
+        f"{str_zone_lines}\n"
+        f"{str_text_lines}\n"
         ")\n"
     )
 
