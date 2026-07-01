@@ -37,8 +37,7 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         joined_pads = '\n'.join(pads)
         return (
             f"  (footprint \"Connector_PinHeader_2.54mm:PinHeader_1x{pin_count:02d}_P2.54mm_Vertical\"\n"
-            f"    (type \"thru_hole\") (layer \"F.Cu\") (at {x_start} {y_start})\n"
-            f"    (descr \"Header {ref}\") (path \"/{ref}\")\n"
+            f"    (layer \"F.Cu\") (at {x_start} {y_start}) (descr \"Header {ref}\") (path \"/{ref}\")\n"
             f"{joined_pads}\n"
             f"  )"
         )
@@ -70,7 +69,7 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
             
             matrix_footprints.append(
                 f"  (footprint \"Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder\"\n"
-                f"    (type \"smd\") (layer \"F.Cu\") (at {r_x} {r_y})\n"
+                f"    (layer \"F.Cu\") (at {r_x} {r_y})\n"
                 f"    (fp_text reference \"{r_ref}\" (at 0 -1.5) (layer \"F.SilkS\") (effects (font (size 0.8 0.8) (thickness 0.15))))\n"
                 f"    (pad \"1\" smd rect (at -1.0 0) (size 1.15 1.4) (layers \"F.Cu\" \"F.Paste\" \"F.Mask\"))\n"
                 f"    (pad \"2\" smd rect (at 1.0 0) (size 1.15 1.4) (layers \"F.Cu\" \"F.Paste\" \"F.Mask\"))\n"
@@ -79,7 +78,7 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
             
             matrix_footprints.append(
                 f"  (footprint \"LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder\"\n"
-                f"    (type \"smd\") (layer \"F.Cu\") (at {led_x} {led_y})\n"
+                f"    (layer \"F.Cu\") (at {led_x} {led_y})\n"
                 f"    (fp_text reference \"{led_ref}\" (at 0 1.5) (layer \"F.SilkS\") (effects (font (size 0.8 0.8) (thickness 0.15))))\n"
                 f"    (pad \"1\" smd rect (at -1.0 0) (size 1.15 1.4) (layers \"F.Cu\" \"F.Paste\" \"F.Mask\"))\n"
                 f"    (pad \"2\" smd rect (at 1.0 0) (size 1.15 1.4) (layers \"F.Cu\" \"F.Paste\" \"F.Mask\"))\n"
@@ -97,7 +96,6 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         {"Reference": "J_POWER", "Value": "8-Pin Header", "Footprint": "PinHeader_1x08_P2.54mm", "Quantity": 1},
         {"Reference": "J_ANALOG", "Value": "6-Pin Header", "Footprint": "PinHeader_1x06_P2.54mm", "Quantity": 1},
         {"Reference": "J_DIGITAL_L", "Value": "8-Pin Header", "Footprint": "PinHeader_1x08_P2.54mm", "Quantity": 1},
-        # FIX: Restored field token matching identity mapping to 'Reference' from 'License'
         {"Reference": "J_DIGITAL_H", "Value": "10-Pin Header", "Footprint": "PinHeader_1x10_P2.54mm", "Quantity": 1}
     ])
 
