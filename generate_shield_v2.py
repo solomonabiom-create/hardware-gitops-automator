@@ -85,7 +85,6 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
                 f"  )"
             )
             
-            # Use net mapping pointers instead of loose integer indexes
             matrix_traces.append(f"  (segment (start {r_x + 1.0} {r_y}) (end {r_x + 1.0} {led_y}) (width 0.3) (layer \"F.Cu\") (net 1))")
             matrix_traces.append(f"  (segment (start {r_x + 1.0} {led_y}) (end {led_x + 1.0} {led_y}) (width 0.3) (layer \"F.Cu\") (net 1))")
             
@@ -107,13 +106,12 @@ def create_advanced_shield(project_name, author_name, rows=2, cols=4):
         "  )"
     ]
 
-    # FIX: Updated text alignment properties from '(justify center)' to directional alignment layout tokens
+    # FIX: Updated text alignment specifications to match strict KiCad 8 directional parameters (left)
     text_lines = [
-        f"  (gr_text \"MATRIX SHIELD: {project_name}\" (at 84 56) (layer \"F.SilkS\") (effects (font (size 1.5 1.5) (thickness 0.3) bold) (justify center left)))",
-        f"  (gr_text \"BOM EXTRACTED VIA PYTHON\" (at 84 92) (layer \"F.SilkS\") (effects (font (size 1.0 1.0) (thickness 0.2)) (justify center left)))"
+        f"  (gr_text \"MATRIX SHIELD: {project_name}\" (at 84 56) (layer \"F.SilkS\") (effects (font (size 1.5 1.5) (thickness 0.3) bold) (justify left)))",
+        f"  (gr_text \"BOM EXTRACTED VIA PYTHON\" (at 84 92) (layer \"F.SilkS\") (effects (font (size 1.0 1.0) (thickness 0.2)) (justify left)))"
     ]
 
-    # FIX: Added a formal global net map section right at the top header area
     net_declarations = [
         "  (net 0 \"\")",
         "  (net 1 \"GND\")"
